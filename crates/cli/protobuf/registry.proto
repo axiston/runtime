@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package registry;
+
+message HelloRequest {}
+
+message HelloResponse {}
+
+service Registry {
+  rpc Hello(HelloRequest) returns (HelloResponse);
+}
