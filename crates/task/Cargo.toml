@@ -1,0 +1,38 @@
+# https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[package]
+name = "runtime-task"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+publish = { workspace = true }
+readme = "./README.md"
+
+authors = { workspace = true }
+repository = { workspace = true }
+homepage = { workspace = true }
+documentation = { workspace = true }
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[lib]
+path = "lib.rs"
+
+[features]
+serde = ["dep:serde", "ecow/serde"]
+trace = ["dep:tracing"]
+
+[dependencies]
+tower = { version = "0.5", features = ["load", "util"] }
+futures = { version = "0.3", features = [] }
+pin-project-lite = { version = "0.2", features = [] }
+thiserror = { version = "1.0", features = [] }
+anyhow = { version = "1.0", features = ["backtrace"] }
+
+deunicode = { version = "1.6", features = [] }
+ecow = { version = "0.2", features = [] }
+
+serde = { version = "1.0", optional = true, features = ["derive"] }
+tracing = { version = "0.1", optional = true, features = [] }

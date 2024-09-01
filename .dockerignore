@@ -1,0 +1,9 @@
+# OS
+Thumbs.db
+.DS_Store
+
+# Editors
+.vs/
+.vscode/
+.idea/
+.fleet/
