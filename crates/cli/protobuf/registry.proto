@@ -1,11 +1,43 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+// import "google/protobuf/empty.proto";
+
 package registry;
 
-message HelloRequest {}
+message Service {
+  string id = 1;
+  string name = 2;
+  string icon = 3;
+}
 
-message HelloResponse {}
+message Entity {
+  string id = 1;
+  string name = 2;
+  string icon = 3;
+}
+
+message CheckRequest {}
+
+message CheckResponse {}
+
+// The message format for requesting for the registry content.
+message RegistryRequest {}
+
+// The message format for responding with the registry content.
+message RegistryResponse {
+  google.protobuf.Timestamp created = 2;
+  google.protobuf.Timestamp updated = 3;
+
+  repeated Service services = 11;
+  repeated Entity triggers = 12;
+  repeated Entity actions = 13;
+}
 
 service Registry {
-  rpc Hello(HelloRequest) returns (HelloResponse);
+  // Comprehensive collection of available tasks and their metadata.
+  rpc Registry(registry.RegistryRequest) returns (registry.RegistryResponse);
+
+  // Authentication, authorization, and health checks.
+  rpc Check(registry.CheckRequest) returns (registry.CheckResponse);
 }

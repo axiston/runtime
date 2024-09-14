@@ -1,0 +1,38 @@
+# OS
+Thumbs.db
+.DS_Store
+
+# Editors
+.vs/
+.vscode/
+.idea/
+.fleet/
+
+# Lang: Rust
+debug/
+target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# Output
+dist/
+output/
+build/
+
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Environment
+env/
+.env
+.env*
+
+# Logs
+logs/
+*.log
+*.log*

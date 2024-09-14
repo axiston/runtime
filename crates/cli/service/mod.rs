@@ -1,11 +1,11 @@
 //! TODO.
 //!
 
-pub use crate::service::app_config::{AppBuilder, AppConfig};
-pub use crate::service::serv_config::Args;
+pub use crate::service::config::{AppBuilder, AppConfig};
 
-mod app_config;
-mod serv_config;
+mod config;
+mod instance;
+mod registry;
 
 /// Application state.
 ///

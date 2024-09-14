@@ -5,7 +5,10 @@ resolver = "2"
 members = [
     "./crates/cli",
     "./crates/core",
+    "./crates/jsvm",
     "./crates/task",
+    "./scripts/tower-path",
+    "./scripts/tower-task",
 ]
 
 [workspace.package]
@@ -20,6 +23,8 @@ homepage = "https://github.com/axiston/runtime"
 documentation = "https://docs.rs/axiston"
 
 [workspace.dependencies]
-runtime-core = { path = "./crates/core", version = "0.1.0" }
-runtime-task = { path = "./crates/task", version = "0.1.0" }
-runtime-type = { path = "./crates/type", version = "0.1.0" }
+axiston-runtime-core = { path = "./crates/core", version = "0.1.0" }
+axiston-runtime-jsvm = { path = "./crates/jsvm", version = "0.1.0" }
+axiston-runtime-task = { path = "./crates/task", version = "0.1.0" }
+tower-path = { path = "./scripts/tower-path", version = "0.1.0" }
+tower-task = { path = "./scripts/tower-task", version = "0.1.0" }

@@ -1,4 +1,4 @@
-### axiston/core
+### runtime/core
 
 Lorem Ipsum. Lorem Ipsum. Lorem Ipsum.
 

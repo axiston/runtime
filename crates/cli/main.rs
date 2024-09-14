@@ -23,6 +23,7 @@ pub struct Args {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
+    middleware::initialize_tracing().await?;
 
     // Service.
     let config = AppConfig::builder().build();

@@ -4,9 +4,9 @@ use std::path::PathBuf;
 
 fn main() -> anyhow::Result<()> {
     let builder = tonic_build::configure()
-        .build_client(false)
+        .build_transport(true)
         .build_server(true)
-        .build_transport(true);
+        .build_client(false);
 
     let dir = PathBuf::from("./protobuf/");
     let instance = dir.join("./instance.proto");

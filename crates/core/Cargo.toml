@@ -1,7 +1,7 @@
 # https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [package]
-name = "runtime-core"
+name = "axiston-runtime-core"
 version = { workspace = true }
 edition = { workspace = true }
 license = { workspace = true }
@@ -13,9 +13,13 @@ repository = { workspace = true }
 homepage = { workspace = true }
 documentation = { workspace = true }
 
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
 [lib]
 path = "lib.rs"
 
 [dependencies]
-runtime-task = { workspace = true }
-runtime-type = { workspace = true }
+axiston-runtime-jsvm = { workspace = true }
+axiston-runtime-task = { workspace = true }

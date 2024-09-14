@@ -8,8 +8,8 @@
 [coverage-badge]: https://img.shields.io/codecov/c/github/axiston/runtime
 [coverage-url]: https://app.codecov.io/gh/axiston/runtime
 
-A server capable of running native `Rust` or `TypeScript` tasks (via Deno
-runtime).
+A server application based on `Deno` runtime, capable of running `JavaScript`,
+`TypeScript`, and native `Rust` tasks.
 
 #### Notes
 
@@ -22,3 +22,11 @@ runtime).
 ```cmd
 runtime --port 8080
 ```
+
+#### Nodes
+
+- May be of following types: trigger (normal or reaction), action
+
+#### Edges
+
+- May attach transformations

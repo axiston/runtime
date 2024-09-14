@@ -1,7 +1,9 @@
 use tonic::{Request, Response, Status};
 
 use crate::handler::registry::registry_proto::registry_server::{Registry, RegistryServer};
-use crate::handler::registry::registry_proto::{HelloRequest, HelloResponse};
+use crate::handler::registry::registry_proto::{
+    CheckRequest, CheckResponse, RegistryRequest, RegistryResponse,
+};
 use crate::service::AppState;
 
 pub mod registry_proto {
@@ -29,10 +31,17 @@ impl RegistryService {
 
 #[tonic::async_trait]
 impl Registry for RegistryService {
-    async fn hello(
+    async fn registry(
         &self,
-        request: Request<HelloRequest>,
-    ) -> Result<Response<HelloResponse>, Status> {
+        request: Request<RegistryRequest>,
+    ) -> Result<Response<RegistryResponse>, Status> {
+        todo!()
+    }
+
+    async fn check(
+        &self,
+        request: Request<CheckRequest>,
+    ) -> Result<Response<CheckResponse>, Status> {
         todo!()
     }
 }

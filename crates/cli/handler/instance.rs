@@ -1,7 +1,11 @@
-use tonic::{Request, Response, Status};
+use futures::stream::BoxStream;
+use futures::StreamExt;
+use tokio::sync::mpsc;
+use tokio_stream::wrappers::ReceiverStream;
+use tonic::{Request, Response, Status, Streaming};
 
 use crate::handler::instance::instance_proto::instance_server::{Instance, InstanceServer};
-use crate::handler::instance::instance_proto::{HelloRequest, HelloResponse};
+use crate::handler::instance::instance_proto::{EventRequest, EventResponse};
 use crate::service::AppState;
 
 pub mod instance_proto {
@@ -29,10 +33,21 @@ impl InstanceService {
 
 #[tonic::async_trait]
 impl Instance for InstanceService {
-    async fn hello(
+    type ConnectStream = BoxStream<'static, Result<EventResponse, Status>>;
+
+    async fn connect(
         &self,
-        request: Request<HelloRequest>,
-    ) -> Result<Response<HelloResponse>, Status> {
-        todo!()
+        request: Request<Streaming<EventRequest>>,
+    ) -> Result<Response<Self::ConnectStream>, Status> {
+        let mut request = request.into_inner();
+
+        let (tx, rx) = mpsc::channel(128);
+        tokio::spawn(async move {
+            while let Some(event)  = request.next().await {
+            };
+        });
+
+        let rx = ReceiverStream::new(rx);
+        Ok(Response::new(Box::pin(rx)))
     }
 }

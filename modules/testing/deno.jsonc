@@ -1,0 +1,12 @@
+{
+	"name": "@axiston/testing",
+	"version": "0.1.0",
+	"exports": {
+		".": "./mod.ts",
+		"./setup": "./setup.ts"
+	},
+	"imports": {
+		"@std/internal": "jsr:@std/internal@^1.0.1",
+		"@std/text": "jsr:@std/text@^1.0.0"
+	}
+}
