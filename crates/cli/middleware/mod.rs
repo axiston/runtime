@@ -2,6 +2,7 @@
 //!
 
 use tower::ServiceBuilder;
+
 pub use crate::middleware::observability::initialize_tracing;
 mod observability;
 mod utility;

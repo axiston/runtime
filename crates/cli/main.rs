@@ -2,15 +2,14 @@
 
 use std::net::{Ipv4Addr, SocketAddr};
 
+use axiston_rt_server::handler::{InstanceService, RegistryService};
+use axiston_rt_server::service::{AppConfig, AppState};
 use clap::Parser;
 use tonic::transport::Server;
 
-use crate::handler::{InstanceService, RegistryService};
-use crate::service::{AppConfig, AppState};
-
-mod handler;
+mod config;
 mod middleware;
-mod service;
+mod server;
 
 /// Command-line arguments.
 #[derive(Debug, Parser)]

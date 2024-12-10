@@ -1,7 +1,7 @@
 # https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [package]
-name = "axiston-runtime-cli"
+name = "axiston-rt-cli"
 version = { workspace = true }
 edition = { workspace = true }
 license = { workspace = true }
@@ -18,28 +18,19 @@ name = "axiston"
 path = "main.rs"
 
 [dependencies]
-axiston-runtime-core = { workspace = true }
+axiston-rt-server = { workspace = true }
 
 clap = { version = "4.5", features = ["derive"] }
-tokio = { version = "1.36", features = ["macros", "rt-multi-thread"] }
-tokio-stream = { version = "0.1", features = [] }
-futures = { version = "0.3", features = [] }
-anyhow = { version = "1.0", features = ["backtrace"] }
+tokio = { workspace = true }
+tokio-stream = { workspace = true }
+futures = { workspace = true }
+anyhow = { workspace = true }
 
-tracing = { version = "0.1", features = [] }
+tracing = { workspace = true }
 tracing-subscriber = { version = "0.3", features = ["env-filter", "time"] }
-tracing-opentelemetry = { version = "0.26.0", features = [] }
-opentelemetry = { version = "0.25.0", features = [] }
+tracing-opentelemetry = { version = "0.26", features = [] }
+opentelemetry = { version = "0.25", features = [] }
 
-tonic = { version = "0.12", features = [] }
-prost = { version = "0.13", features = [] }
-tonic-types = { version = "0.12", features = [] }
-prost-types = { version = "0.13", features = [] }
-
+tonic = { workspace = true }
 tower = { version = "0.4", features = ["full"] }
 tower-http = { version = "0.5", features = ["full"] }
-
-[build-dependencies]
-anyhow = { version = "1.0", features = ["backtrace"] }
-tonic-build = { version = "0.12", features = [] }
-prost-build = { version = "0.13", features = [] }

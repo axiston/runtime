@@ -4,11 +4,10 @@
 resolver = "2"
 members = [
     "./crates/cli",
-    "./crates/core",
     "./crates/jsvm",
+    "./crates/schema",
+    "./crates/server",
     "./crates/task",
-    "./scripts/tower-path",
-    "./scripts/tower-task",
 ]
 
 [workspace.package]
@@ -23,8 +22,29 @@ homepage = "https://github.com/axiston/runtime"
 documentation = "https://docs.rs/axiston"
 
 [workspace.dependencies]
-axiston-runtime-core = { path = "./crates/core", version = "0.1.0" }
-axiston-runtime-jsvm = { path = "./crates/jsvm", version = "0.1.0" }
-axiston-runtime-task = { path = "./crates/task", version = "0.1.0" }
-tower-path = { path = "./scripts/tower-path", version = "0.1.0" }
-tower-task = { path = "./scripts/tower-task", version = "0.1.0" }
+axiston-rt-jsvm = { path = "./crates/jsvm", version = "0.1.0" }
+axiston-rt-schema = { path = "./crates/schema", version = "0.1.0", features = ["server"] }
+axiston-rt-server = { path = "./crates/server", version = "0.1.0" }
+axiston-rt-task = { path = "./crates/task", version = "0.1.0" }
+
+tokio = { version = "1.36", features = ["macros", "rt-multi-thread"] }
+tokio-stream = { version = "0.1", features = [] }
+pin-project-lite = { version = "0.2", features = [] }
+futures = { version = "0.3", features = [] }
+thiserror = { version = "2.0", features = [] }
+anyhow = { version = "1.0", features = ["backtrace"] }
+
+tracing = { version = "0.1", features = [] }
+derive_more = { version = "1.0", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+ecow = { version = "0.2", features = ["serde"] }
+
+tonic = { version = "0.12", features = [] }
+prost = { version = "0.13", features = [] }
+tonic-types = { version = "0.12", features = [] }
+prost-types = { version = "0.13", features = [] }
+tonic-build = { version = "0.12", features = [] }
+prost-build = { version = "0.13", features = [] }
+
+tower = { version = "0.5", features = ["full"] }
+tower-http = { version = "0.6", features = ["full"] }

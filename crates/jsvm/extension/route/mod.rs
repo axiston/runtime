@@ -7,9 +7,8 @@ mod internal;
 mod ops;
 
 use deno_core::extension;
-use crate::extension::route::ops::{
-    op_register_service, op_register_trigger, op_register_action
-};
+
+use crate::extension::route::ops::{op_register_action, op_register_service, op_register_trigger};
 
 extension!(
     axis_routing,
@@ -23,8 +22,7 @@ extension!(
 /// Includes all error types that may occur.
 #[derive(Debug, thiserror::Error)]
 #[must_use = "errors do nothing unless you use them"]
-pub enum Error {
-}
+pub enum Error {}
 
 /// Specialized [`Result`] alias for [`Error`].
 ///

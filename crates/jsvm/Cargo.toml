@@ -1,7 +1,7 @@
 # https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [package]
-name = "axiston-runtime-jsvm"
+name = "axiston-rt-jsvm"
 version = { workspace = true }
 edition = { workspace = true }
 license = { workspace = true }
@@ -21,16 +21,21 @@ rustdoc-args = ["--cfg", "docsrs"]
 path = "lib.rs"
 
 [dependencies]
-axiston-runtime-task = { workspace = true }
+axiston-rt-task = { workspace = true }
 
 tokio = { version = "1.36", features = [] }
-serde = { version = "1.0", features = ["derive"] }
-thiserror = { version = "1.0", features = [] }
 tracing = { version = "0.1", features = [] }
+async-trait = { version = "0.1", features = [] }
+ctor = { version = "0.2", features = [] }
 
-deno_core = { version = "0.308.0", features = [] }
-deno_ast = { version = "0.42.0", features = [] }
+thiserror = { version = "1.0", features = [] }
+serde = { version = "1.0", features = ["derive"] }
+rand = { version = "0.8", features = [] }
+
+deno_core = { version = "0.307.0", features = [] }
+deno_ast = { version = "0.42.2", features = [] }
 deno_permissions = { version = "0.28.0", features = [] }
+deno_cache_dir = { version = "0.10.3", features = [] }
 
 deno_console = { version = "0.168.0", features = [] }
 deno_crypto = { version = "0.182.0", features = [] }
@@ -38,13 +43,12 @@ deno_webidl = { version = "0.168.0", features = [] }
 deno_url = { version = "0.168.0", features = [] }
 
 deno_fs = { version = "0.78.0", features = ["sync_fs"] }
-deno_http = { version = "0.166.0", features = [] }
 deno_io = { version = "0.78.0", features = [] }
-
 deno_fetch = { version = "0.192.0", features = [] }
 deno_net = { version = "0.160.0", features = [] }
 deno_web = { version = "0.199.0", features = [] }
 
+deno_http = { version = "0.166.0", features = [] }
 deno_tls = { version = "0.155.0", features = [] }
 deno_websocket = { version = "0.173.0", features = [] }
 deno_webstorage = { version = "0.163.0", features = [] }

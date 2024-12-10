@@ -3,21 +3,30 @@
 #![doc = include_str!("./README.md")]
 
 //! ```rust
+//! use axiston_rt_task::routing::Router;
+//! use axiston_rt_task::Result;
+//!
+//! fn main() -> Result<()> {
+//!     let router = Router::default();
+//!     Ok(())
+//! }
 //! ```
 
-pub mod datatype;
+pub mod context;
+pub mod handler;
 pub mod registry;
+pub mod routing;
 
-/// Unrecoverable failure of the [`Router`].
+/// Unrecoverable failure of the [`Registry`].
 ///
 /// Includes all error types that may occur.
 ///
-/// [`Router`]: registry::Router
+/// [`Registry`]: registry::Registry
 #[derive(Debug, thiserror::Error)]
 #[must_use = "errors do nothing unless you use them"]
 pub enum Error {
-    // #[error("called task failure: {0}")]
-    // Task(#[from] context::TaskError),
+    #[error("called task failure: {0}")]
+    Task(#[from] context::TaskError),
 }
 
 /// Specialized [`Result`] alias for the [`Error`] type.

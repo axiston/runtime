@@ -1,4 +1,5 @@
 use tracing::{debug, error, info, trace, warn, Level};
+
 use crate::extension::trace::datatype::TracingOptions;
 use crate::extension::trace::Result;
 

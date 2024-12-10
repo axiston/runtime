@@ -1,7 +1,7 @@
 # https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [package]
-name = "axiston-runtime-task"
+name = "axiston-rt-task"
 version = { workspace = true }
 edition = { workspace = true }
 license = { workspace = true }
@@ -21,14 +21,15 @@ rustdoc-args = ["--cfg", "docsrs"]
 path = "lib.rs"
 
 [dependencies]
-tower-path = { workspace = true, features = [] }
-tower-task = { workspace = true, features = [] }
+futures = { workspace = true }
+pin-project-lite = { workspace = true }
+thiserror = { workspace = true }
 
-tower = { version = "0.5", features = ["load", "util"] }
-futures = { version = "0.3", features = [] }
-pin-project-lite = { version = "0.2", features = [] }
+derive_more = { workspace = true }
+serde = { workspace = true }
+tracing = { workspace = true }
+ecow = { workspace = true }
+tower = { workspace = true }
 
-serde = { version = "1.0", features = ["derive"] }
-tracing = { version = "0.1", features = [] }
-thiserror = { version = "1.0", features = [] }
-ecow = { version = "0.2", features = ["serde"] }
+[dev-dependencies]
+tokio = { workspace = true }

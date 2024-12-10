@@ -21,13 +21,6 @@ dist/
 output/
 build/
 
-# Binaries
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-
 # Environment
 env/
 .env
@@ -37,3 +30,6 @@ env/
 logs/
 *.log
 *.log*
+
+# Generated
+/crates/schema/generated/

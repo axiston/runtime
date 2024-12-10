@@ -1,38 +1,33 @@
 //! TODO.
 //!
 
-mod machine;
-mod permission;
+mod cert_provider;
+mod deno_runtime;
+mod filesystem;
+mod module_loader;
+mod permissions;
+mod transpile;
 
 use std::fmt;
 use std::rc::Rc;
 
-use deno_core::{JsRuntime, RuntimeOptions};
 use tokio::runtime::Runtime as TokioRuntime;
 
+use crate::runtime::deno_runtime::DenoRuntime;
+pub use crate::runtime::permissions::{axis_permissions, MyPermission};
+
 pub struct Jsvm {
-    inner: JsRuntime,
+    deno_runtime: DenoRuntime,
+    tokio_runtime: TokioRuntime,
 }
 
 impl Jsvm {
     /// Returns a new [`Jsvm`].
     pub fn new(tokio_runtime: Rc<TokioRuntime>) -> Self {
-        JsRuntime::init_platform(None, true);
-
-        let options = RuntimeOptions {
-            extensions: vec![],
-            module_loader: None,
-            extension_transpiler: None,
-            ..RuntimeOptions::default()
-        };
-
-        let inner = JsRuntime::new(options);
-
         todo!()
     }
 
-    // run
-    // inspect
+    // TODO: load modules
 }
 
 impl fmt::Debug for Jsvm {

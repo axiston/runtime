@@ -9,6 +9,7 @@
 //! ```
 
 mod extension;
+mod runtime;
 
 /// Unrecoverable failure of the [`Jsvm`].
 ///

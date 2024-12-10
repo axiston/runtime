@@ -1,21 +1,18 @@
-//! TODO.
+//! TODO. [`Registry`].
 //!
 
-use std::collections::HashMap;
-use std::hash::Hash;
 use std::sync::{Arc, Mutex};
 
-use tower_path::routing::Router;
+use crate::registry::action::{ActionManifest, ActionRequest, ActionResponse};
+use crate::registry::trigger::{TriggerManifest, TriggerRequest, TriggerResponse};
+use crate::routing::Router;
 
-use crate::registry::handler::{ActionHandler, TriggerHandler};
-use crate::registry::index::{ActionIndex, ServiceIndex, TriggerIndex};
-use crate::Result;
-
-mod handler;
-mod index;
-mod cache;
+mod action;
+mod custom_serde;
+mod trigger;
 
 /// TODO.
+#[must_use = "routers do nothing unless you use them"]
 #[derive(Debug, Default, Clone)]
 pub struct Registry {
     inner: Arc<Mutex<RegistryInner>>,
@@ -23,9 +20,9 @@ pub struct Registry {
 
 #[derive(Debug, Default)]
 struct RegistryInner {
-    services: HashMap<ServiceIndex, ()>,
-    triggers: Router<TriggerHandler, TriggerIndex>,
-    actions: Router<ActionHandler, ActionIndex>,
+    // registered_services: Router<ServiceIndex, ()>,
+    registered_triggers: Router<TriggerRequest, TriggerResponse>,
+    registered_actions: Router<ActionRequest, ActionResponse>,
 }
 
 impl Registry {
@@ -35,21 +32,17 @@ impl Registry {
         Self::default()
     }
 
-    /// TODO.
-    pub fn register_service(&self) -> Result<()> {
-        Ok(())
-    }
-
-    /// TODO.
-    pub fn register_trigger(&self) -> Result<()> {
-        Ok(())
-    }
-
-    /// TODO.
-    pub fn register_action(&self) -> Result<()> {
-        Ok(())
-    }
+    // pub fn register_action()
 }
 
 #[cfg(test)]
-mod test {}
+mod test {
+    use crate::registry::Registry;
+    use crate::Result;
+
+    #[test]
+    fn build_empty() -> Result<()> {
+        let _ = Registry::new();
+        Ok(())
+    }
+}
