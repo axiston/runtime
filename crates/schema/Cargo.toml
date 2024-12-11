@@ -21,6 +21,8 @@ rustdoc-args = ["--cfg", "docsrs"]
 path = "lib.rs"
 
 [features]
+default = ["client", "server"]
+
 # Enables or disables gRPC client code generation.
 client = []
 # Enables or disables gRPC server code generation.

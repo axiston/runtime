@@ -23,7 +23,7 @@ documentation = "https://docs.rs/axiston"
 
 [workspace.dependencies]
 axiston-rt-jsvm = { path = "./crates/jsvm", version = "0.1.0" }
-axiston-rt-schema = { path = "./crates/schema", version = "0.1.0", features = ["server"] }
+axiston-rt-schema = { path = "./crates/schema", version = "0.1.0" }
 axiston-rt-server = { path = "./crates/server", version = "0.1.0" }
 axiston-rt-task = { path = "./crates/task", version = "0.1.0" }
 

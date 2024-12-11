@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package rt.json.value;
+
+// Represents different types of `JSON` values.
+message JsonValue {
+  // Specifies that the value field can hold one of several possible types.
+  oneof value {
+    // Represents a string type, e.g. `"hello"` or `"world"`.
+    string string_type = 1;
+    // Represents an integer type e.g. `4` or `138253`.
+    int32 integer_type = 2;
+    // Represents a float type e.g. `2.6` or `6.0004`.
+    float float_type = 3;
+    // Represents a boolean type i.e. `true`/`false`.
+    bool boolean_value = 4;
+    // Represents a null value i.e. `null`.
+    google.protobuf.Empty null_value = 5;
+    // Represents an object type e.g. `{ "key": "value" }`.
+    JsonObject object_value = 6;
+    // Represents an array type e.g. `["key", "value"]`.
+    JsonArray array_value = 7;
+  }
+}
+
+// Contains the values of a map of `JSON` values.
+message JsonObject {
+  // Contains the map of the field names and their values.
+  map<string, JsonValue> fields = 1;
+}
+
+// Contains the values of an array of `JSON` values.
+message JsonArray {
+  // Contains the values of the elements in the array.
+  repeated JsonValue items = 1;
+}

@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+package rt.request;
+
+// Request to open a connection to the event bus.
+// Indicates the Gateway is ready accept events.
+message OpenRequest {
+  // Token for authenticating the Gateway.
+  string authentication_token = 3;
+  // Required runtime capabilities.
+  repeated string runtime_capabilities = 4;
+  // Preferred communication protocols.
+  repeated string preferred_protocols = 5;
+
+  // Constraints on resources for the task.
+  optional ResourceLimits resource_limits = 26;
+}
+
+// Request to submit a task for execution by the Runtime.
+message ExecuteRequest {
+  // Unique identifier for the task.
+  string task_id = 1;
+  // Custom task parameters as key-value pairs.
+  map<string, string> task_fields = 2;
+  // Sensitive task-specific data (e.g., API keys).
+  map<string, string> task_secrets = 3;
+
+  // Priority level of the task (higher is more important).
+  optional int32 priority = 23;
+  // Deadline for the task completion.
+  optional google.protobuf.Timestamp deadline = 24;
+  // Whether task dependencies are cached.
+  optional bool cache_deps = 25;
+
+  // Policy for retrying failed tasks.
+  optional RetryPolicy retry_policy = 31;
+  // Policy for handling task timeouts.
+  optional TimeoutPolicy timeout_policy = 32;
+}
+
+// Request to close the connection, preventing the Runtime from accepting new tasks.
+message CloseRequest {
+  // Force immediate closure without waiting.
+  // Ignores pending tasks (from this connection) before closing.
+  optional bool force_close = 2;
+  // Reason for closing the connection.
+  optional string reason = 3;
+  // Require acknowledgment before closing.
+  optional bool ack_required = 4;
+}
+
+// Policy for retrying failed tasks.
+message RetryPolicy {
+  // Maximum number of retry attempts.
+  uint32 max_retries = 1;
+  // Base delay between consecutive retries.
+  google.protobuf.Duration base_backoff = 2;
+  // Multiplier for exponential backoff.
+  optional double exponential_multiplier = 3;
+  // Maximum delay between consecutive retries.
+  google.protobuf.Duration max_backoff = 4;
+}
+
+// Policy for handling task timeouts.
+message TimeoutPolicy {
+  // Maximum execution time allowed for the task.
+  google.protobuf.Duration execution_timeout = 1;
+  // Whether to forcibly terminate the task on timeout.
+  bool terminate_on_timeout = 2;
+  // Action to take on timeout (e.g., "retry", "terminate").
+  TimeoutAction timeout_action = 3;
+  // Extra time given before final termination after timeout.
+  optional google.protobuf.Duration grace_period = 4;
+  // Frequency of checking for timeout conditions.
+  optional google.protobuf.Duration monitor_interval = 5;
+}
+
+// Lists all of possible timeout actions.
+enum TimeoutAction {
+  // Default value, action unspecified.
+  TIMEOUT_ACTION_UNSPECIFIED = 0;
+  // Task is considered to be failed. Retry the task.
+  TIMEOUT_ACTION_RETRY = 1;
+  // Task is considered to be failed. Do not retry the task.
+  TIMEOUT_ACTION_TERMINATE = 2;
+}
+
+// Limits runtime resources.
+message ResourceLimits {
+  // Maximum used CPU percentage.
+  uint32 max_cpu_percent = 1;
+  // Maximum used RAM in MB.
+  uint32 max_ram_mb = 2;
+  // Maximum used disk in MB.
+  uint64 max_disk_mb = 3;
+}

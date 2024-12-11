@@ -33,3 +33,6 @@ pub enum Error {
 ///
 /// [`Result`]: std::result::Result
 pub type Result<T, E = Error> = std::result::Result<T, E>;
+
+// TODO: Is there any real reason to make a different between action and trigger?
+// Make trigger dynamically determined if the action returns a single boolean.

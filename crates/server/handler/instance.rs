@@ -1,5 +1,5 @@
 use axiston_rt_schema::instance::instance_server::{Instance, InstanceServer};
-use axiston_rt_schema::instance::{EventRequest, EventResponse};
+use axiston_rt_schema::instance::{EventRequest, EventResponse, StatusRequest, StatusResponse};
 use futures::stream::BoxStream;
 use futures::StreamExt;
 use tokio::sync::mpsc;
@@ -29,16 +29,28 @@ impl InstanceService {
 
 #[tonic::async_trait]
 impl Instance for InstanceService {
-    type ConnectStream = BoxStream<'static, Result<EventResponse, Status>>;
+    async fn status(
+        &self,
+        request: Request<StatusRequest>,
+    ) -> Result<Response<StatusResponse>, Status> {
+        todo!()
+    }
 
-    async fn connect(
+    type BusStream = BoxStream<'static, Result<EventResponse, Status>>;
+
+    async fn bus(
         &self,
         request: Request<Streaming<EventRequest>>,
-    ) -> Result<Response<Self::ConnectStream>, Status> {
+    ) -> Result<Response<Self::BusStream>, Status> {
         let mut request = request.into_inner();
-
         let (tx, rx) = mpsc::channel(128);
-        tokio::spawn(async move { while let Some(event) = request.next().await {} });
+        // TODO: Create a new queue.
+
+        let _handle = tokio::spawn(async move {
+            while let Some(event) = request.next().await {
+                let _ = event;
+            }
+        });
 
         let rx = ReceiverStream::new(rx);
         Ok(Response::new(Box::pin(rx)))
