@@ -28,7 +28,7 @@ mod test {
 
     #[test]
     fn from_default() -> Result<()> {
-        let _ = TaskMetrics::new();
+        let _metrics = TaskMetrics::new();
         Ok(())
     }
 }

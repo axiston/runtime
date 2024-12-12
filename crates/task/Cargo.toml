@@ -25,8 +25,11 @@ futures = { workspace = true }
 pin-project-lite = { workspace = true }
 thiserror = { workspace = true }
 
-derive_more = { workspace = true }
 serde = { workspace = true }
+serde_json = { workspace = true }
+jsonschema = { workspace = true }
+
+derive_more = { workspace = true }
 tracing = { workspace = true }
 ecow = { workspace = true }
 tower = { workspace = true }

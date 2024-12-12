@@ -1,40 +1,18 @@
-use std::collections::HashMap;
 use std::fmt;
 
 use derive_more::{Deref, DerefMut, From};
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
-use crate::routing::Layers;
-
-/// TODO.
-#[derive(Debug, Default, Clone, Serialize, Deserialize, From)]
-#[must_use = "requests do nothing unless you serialize them"]
-pub struct Fields {
-    inner: HashMap<String, String>,
-}
-
-impl Fields {
-    /// Returns an empty [`Fields`] store.
-    #[inline]
-    pub fn new() -> Self {
-        Self::default()
-    }
-}
+use crate::routing::layers::Layers;
 
 /// TODO.
-#[derive(Debug, Default, Clone, Serialize, Deserialize, From)]
-#[must_use = "requests do nothing unless you serialize them"]
-pub struct Secrets {
-    inner: HashMap<String, String>,
-}
+#[derive(Debug, Clone, Serialize, Deserialize, Deref, From)]
+pub struct Inputs(pub Value);
 
-impl Secrets {
-    /// Returns an empty [`Secrets`] store.
-    #[inline]
-    pub fn new() -> Self {
-        Self::default()
-    }
-}
+/// TODO.
+#[derive(Debug, Clone, Serialize, Deserialize, Deref, From)]
+pub struct Secrets(pub Value);
 
 /// Serializable [`TaskHandler`] service request.
 ///
@@ -46,9 +24,9 @@ pub struct TaskRequest<T = ()> {
     #[deref_mut]
     inner: T,
 
-    fields: Fields,
-    secrets: Secrets,
-    layers: Layers,
+    pub(crate) inputs: Inputs,
+    pub(crate) secrets: Secrets,
+    pub(crate) layers: Layers,
 }
 
 impl<T> TaskRequest<T> {
@@ -57,8 +35,8 @@ impl<T> TaskRequest<T> {
     pub fn new(inner: T) -> Self {
         Self {
             inner,
-            fields: Fields::new(),
-            secrets: Secrets::new(),
+            inputs: Inputs(Value::default()),
+            secrets: Secrets(Value::default()),
             layers: Layers::new(),
         }
     }
@@ -79,7 +57,7 @@ impl<T> TaskRequest<T> {
 impl<T> fmt::Debug for TaskRequest<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("TaskRequest")
-            .field("fields", &self.fields)
+            .field("inputs", &self.inputs)
             .field("secrets", &self.secrets)
             .finish_non_exhaustive()
     }
@@ -92,8 +70,8 @@ impl<T> fmt::Debug for TaskRequest<T> {
 #[must_use = "requests do nothing unless you serialize them"]
 pub struct TaskRequestBuilder<T> {
     inner: T,
-    fields: Option<Fields>,
-    secrets: Option<Secrets>,
+    inputs: Option<Value>,
+    secrets: Option<Value>,
     layers: Option<Layers>,
 }
 
@@ -103,26 +81,23 @@ impl<T> TaskRequestBuilder<T> {
     pub fn new(inner: T) -> Self {
         Self {
             inner,
-            fields: None,
+            inputs: None,
             secrets: None,
             layers: None,
         }
     }
 
-    // TODO: Method to add a single field.
-    // TODO: Method to add a single secret.
-
-    /// Overrides the default value of [`TaskRequest`]`::fields`.
+    /// Overrides the default value of [`TaskRequest`]`::inputs`.
     #[inline]
-    pub fn with_fields(mut self, fields: Fields) -> Self {
-        self.fields = Some(fields);
+    pub fn with_inputs(mut self, json: Value) -> Self {
+        self.inputs = Some(json);
         self
     }
 
     /// Overrides the default value of [`TaskRequest`]`::secrets`.
     #[inline]
-    pub fn with_secrets(mut self, secrets: Secrets) -> Self {
-        self.secrets = Some(secrets);
+    pub fn with_secrets(mut self, json: Value) -> Self {
+        self.secrets = Some(json);
         self
     }
 
@@ -137,8 +112,8 @@ impl<T> TaskRequestBuilder<T> {
     pub fn build(self) -> TaskRequest<T> {
         TaskRequest {
             inner: self.inner,
-            fields: self.fields.unwrap_or_default(),
-            secrets: self.secrets.unwrap_or_default(),
+            inputs: Inputs(self.inputs.unwrap_or_default()),
+            secrets: Secrets(self.secrets.unwrap_or_default()),
             layers: self.layers.unwrap_or_default(),
         }
     }
@@ -146,16 +121,17 @@ impl<T> TaskRequestBuilder<T> {
 
 #[cfg(test)]
 mod test {
-    use crate::context::storages::{Fields, Secrets};
+    use serde_json::Value;
+
     use crate::context::TaskRequest;
     use crate::routing::Layers;
     use crate::Result;
 
     #[test]
-    fn build() -> Result<()> {
+    fn build_empty_request() -> Result<()> {
         let _request = TaskRequest::builder(5)
-            .with_fields(Fields::new())
-            .with_secrets(Secrets::new())
+            .with_inputs(Value::default())
+            .with_secrets(Value::default())
             .with_layers(Layers::new())
             .build();
         Ok(())

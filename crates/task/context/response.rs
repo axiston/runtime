@@ -1,23 +1,16 @@
-use std::collections::HashMap;
 use std::fmt;
 
 use derive_more::{Deref, DerefMut, From};
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 /// TODO.
-#[derive(Debug, Default, Clone, Serialize, Deserialize, From)]
-#[must_use = "responses do nothing unless you serialize them"]
-pub struct Metrics {
-    inner: HashMap<String, String>,
-}
+#[derive(Debug, Clone, Serialize, Deserialize, Deref, From)]
+pub struct Outputs(pub Value);
 
-impl Metrics {
-    /// Returns an empty [`Metrics`] store.
-    #[inline]
-    pub fn new() -> Self {
-        Self::default()
-    }
-}
+/// TODO.
+#[derive(Debug, Clone, Serialize, Deserialize, Deref, From)]
+pub struct Metrics(pub Value);
 
 /// Deserializable [`TaskHandler`] service response.
 ///
@@ -29,7 +22,8 @@ pub struct TaskResponse<T> {
     #[deref_mut]
     inner: T,
 
-    metrics: Metrics,
+    pub(crate) outputs: Outputs,
+    pub(crate) metrics: Metrics,
 }
 
 impl<T> TaskResponse<T> {
@@ -38,7 +32,8 @@ impl<T> TaskResponse<T> {
     pub fn new(inner: T) -> Self {
         Self {
             inner,
-            metrics: Metrics::default(),
+            outputs: Outputs(Value::default()),
+            metrics: Metrics(Value::default()),
         }
     }
 
@@ -58,6 +53,7 @@ impl<T> TaskResponse<T> {
 impl<T> fmt::Debug for TaskResponse<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("TaskResponse")
+            .field("outputs", &self.outputs)
             .field("metrics", &self.metrics)
             .finish_non_exhaustive()
     }
@@ -70,7 +66,8 @@ impl<T> fmt::Debug for TaskResponse<T> {
 #[must_use = "responses do nothing unless you serialize them"]
 pub struct TaskResponseBuilder<T> {
     inner: T,
-    metrics: Option<Metrics>,
+    outputs: Option<Value>,
+    metrics: Option<Value>,
 }
 
 impl<T> TaskResponseBuilder<T> {
@@ -79,27 +76,48 @@ impl<T> TaskResponseBuilder<T> {
     pub fn new(inner: T) -> Self {
         Self {
             inner,
+            outputs: None,
             metrics: None,
         }
+    }
+
+    /// Overrides the default value of [`TaskResponse`]`::outputs`.
+    #[inline]
+    pub fn with_outputs(mut self, json: Value) -> Self {
+        self.outputs = Some(json);
+        self
+    }
+
+    /// Overrides the default value of [`TaskResponse`]`::metrics`.
+    #[inline]
+    pub fn with_metrics(mut self, json: Value) -> Self {
+        self.metrics = Some(json);
+        self
     }
 
     /// Returns a new [`TaskResponse`].
     pub fn build(self) -> TaskResponse<T> {
         TaskResponse {
             inner: self.inner,
-            metrics: self.metrics.unwrap_or_default(),
+            outputs: Outputs(self.outputs.unwrap_or_default()),
+            metrics: Metrics(self.metrics.unwrap_or_default()),
         }
     }
 }
 
 #[cfg(test)]
 mod test {
+    use serde_json::Value;
+
     use crate::context::TaskResponse;
     use crate::Result;
 
     #[test]
-    fn build() -> Result<()> {
-        let _response = TaskResponse::builder(5).build();
+    fn build_empty_response() -> Result<()> {
+        let _response = TaskResponse::builder(5)
+            .with_outputs(Value::default())
+            .with_metrics(Value::default())
+            .build();
         Ok(())
     }
 }
