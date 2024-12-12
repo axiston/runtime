@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "entity.proto";
+
+package rt.registry;
+
+// Retrieves the registry details.
+message RegistryRequest {}
+
+// Contains the registry details.
+message RegistryResponse {
+  // Total number of registered services.
+  uint32 total_services = 1;
+  // Total number of registered actions.
+  uint32 total_actions = 2;
+  // Total number of registered triggers.
+  uint32 total_triggers = 3;
+
+  // Registry registration startup timestamp.
+  google.protobuf.Timestamp first_updated_at = 4;
+  // Registry registration shutdown timestamp.
+  google.protobuf.Timestamp last_updated_at = 5;
+
+  // List of registered services.
+  repeated rt.entity.Service services = 11;
+  // List of registered actions.
+  repeated rt.entity.Entity actions = 12;
+  // List of registered triggers.
+  repeated rt.entity.Entity triggers = 13;
+}
+
+message SearchRequest {
+  uint32 query_id = 11;
+  // Search term to match all registered entities to.
+  string query = 12;
+  // Filter by associated tags.
+  repeated string tags = 13;
+
+  // Limit on the number of search results.
+  uint32 max_results = 21;
+  // Include deprecated entities in search results if true.
+  bool include_deprecated = 22;
+}
+
+message SearchResponse {
+  // Entities matching the search criteria.
+  repeated rt.entity.Entity matching_entities = 1;
+  // Total number of matches found.
+  uint32 total_matches = 2;
+  // True if results were truncated due to max_results.
+  bool truncated = 3;
+}
+
+service Registry {
+  // Comprehensive collection of available tasks and their metadata.
+  rpc Registry(RegistryRequest) returns (RegistryResponse);
+
+  // Searches for specific services in the registry.
+  rpc Search(SearchRequest) returns (SearchResponse);
+}
