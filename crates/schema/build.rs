@@ -1,6 +1,5 @@
 #![forbid(unsafe_code)]
 
-use std::fs::create_dir_all;
 use std::path::PathBuf;
 
 fn main() -> anyhow::Result<()> {
@@ -16,12 +15,9 @@ fn main() -> anyhow::Result<()> {
     let instance = input_dir.join("./instance.proto");
     let registry = input_dir.join("./registry.proto");
 
-    let output_dir = PathBuf::from("./generated/");
-    create_dir_all(output_dir.as_path())?;
-
     let protos = [instance.as_path(), registry.as_path()];
     let includes = [input_dir.as_path()];
-    builder.out_dir(output_dir).compile(&protos, &includes)?;
+    builder.compile_protos(&protos, &includes)?;
 
     Ok(())
 }

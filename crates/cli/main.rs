@@ -4,24 +4,17 @@ use std::net::{Ipv4Addr, SocketAddr};
 
 use axiston_rt_server::handler::{InstanceService, RegistryService};
 use axiston_rt_server::service::{AppConfig, AppState};
-use clap::Parser;
 use tonic::transport::Server;
+
+use crate::config::Args;
 
 mod config;
 mod middleware;
 mod server;
 
-/// Command-line arguments.
-#[derive(Debug, Parser)]
-pub struct Args {
-    /// Bound server port.
-    #[arg(short, long, default_value_t = 3000)]
-    pub port: u16,
-}
-
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let args = Args::parse();
+    let args = Args::new();
     middleware::initialize_tracing().await?;
 
     // Service.

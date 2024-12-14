@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+package rt.policy.timeout;
+
+// Policy for handling task timeouts.
+message TimeoutPolicy {
+  // Maximum execution time allowed for the task.
+  google.protobuf.Duration execution_timeout = 1;
+  // Whether to forcibly terminate the task on timeout.
+  bool terminate_on_timeout = 2;
+  // Action to take on timeout (e.g., "retry", "terminate").
+  TimeoutAction timeout_action = 3;
+  // Extra time given before final termination after timeout.
+  optional google.protobuf.Duration grace_period = 4;
+  // Frequency of checking for timeout conditions.
+  optional google.protobuf.Duration monitor_interval = 5;
+}
+
+// Lists all of possible timeout actions.
+enum TimeoutAction {
+  // Default value, action unspecified.
+  TIMEOUT_ACTION_UNSPECIFIED = 0;
+  // Task is considered to be failed. Retry the task.
+  TIMEOUT_ACTION_RETRY = 1;
+  // Task is considered to be failed. Do not retry the task.
+  TIMEOUT_ACTION_TERMINATE = 2;
+}

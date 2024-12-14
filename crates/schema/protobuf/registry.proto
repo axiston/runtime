@@ -2,61 +2,63 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
-import "entity.proto";
+import "message/entity.proto";
 
 package rt.registry;
 
-// Retrieves the registry details.
-message RegistryRequest {}
-
 // Contains the registry details.
-message RegistryResponse {
+message RegistryContentResponse {
   // Total number of registered services.
   uint32 total_services = 1;
-  // Total number of registered actions.
-  uint32 total_actions = 2;
-  // Total number of registered triggers.
-  uint32 total_triggers = 3;
-
-  // Registry registration startup timestamp.
-  google.protobuf.Timestamp first_updated_at = 4;
-  // Registry registration shutdown timestamp.
-  google.protobuf.Timestamp last_updated_at = 5;
+  // Total number of registered entities.
+  uint32 total_entities = 2;
 
   // List of registered services.
   repeated rt.entity.Service services = 11;
-  // List of registered actions.
-  repeated rt.entity.Entity actions = 12;
-  // List of registered triggers.
-  repeated rt.entity.Entity triggers = 13;
+  // List of registered entities.
+  repeated rt.entity.Entity entities = 12;
+
+  // Registry registration startup timestamp.
+  google.protobuf.Timestamp first_updated_at = 21;
+  // Registry registration shutdown timestamp.
+  google.protobuf.Timestamp last_updated_at = 22;
 }
 
-message SearchRequest {
-  uint32 query_id = 11;
-  // Search term to match all registered entities to.
-  string query = 12;
-  // Filter by associated tags.
-  repeated string tags = 13;
+// Defines the format of the search query.
+message FindServicesRequest {
+  // Unique identifier for the query.
+  string query_id = 1;
+  // Searches the query to match services or entities.
+  string query = 2;
+  // Filters by associated tags (if any).
+  repeated string tags = 3;
 
-  // Limit on the number of search results.
-  uint32 max_results = 21;
-  // Include deprecated entities in search results if true.
-  bool include_deprecated = 22;
+  // Limits on the number of search results.
+  uint32 max_results = 11;
+  // Includes deprecated entities in search results.
+  bool include_deprecated = 12;
 }
 
-message SearchResponse {
+// Defines the format of the search results.
+message FindServicesResponse {
+  // Unique identifier for the query.
+  string query_id = 1;
+
+  // Services matching the search criteria.
+  repeated rt.entity.Service matching_services = 2;
   // Entities matching the search criteria.
-  repeated rt.entity.Entity matching_entities = 1;
+  repeated rt.entity.Entity matching_entities = 3;
+
   // Total number of matches found.
-  uint32 total_matches = 2;
-  // True if results were truncated due to max_results.
-  bool truncated = 3;
+  uint32 total_matches = 11;
+  // Indicates if results were truncated.
+  bool is_truncated = 12;
 }
 
 service Registry {
-  // Comprehensive collection of available tasks and their metadata.
-  rpc Registry(RegistryRequest) returns (RegistryResponse);
+  // Retrieves all available tasks and their metadata.
+  rpc GetRegistryContent(google.protobuf.Empty) returns (RegistryContentResponse);
 
-  // Searches for specific services in the registry.
-  rpc Search(SearchRequest) returns (SearchResponse);
+  // Searches for specific services and entities in the registry.
+  rpc FindServices(FindServicesRequest) returns (FindServicesResponse);
 }

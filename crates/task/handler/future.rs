@@ -11,6 +11,7 @@ use futures::FutureExt;
 use pin_project_lite::pin_project;
 
 use crate::context::{TaskError, TaskResponse};
+use crate::handler::metric::LockTaskMetrics;
 
 pin_project! {
     /// Opaque [`Future`] return type for [`TaskHandler::call`].
@@ -21,6 +22,7 @@ pin_project! {
     #[must_use = "futures do nothing unless you `.await` or poll them"]
     pub struct TaskFuture<U> {
         #[pin] fut: BoxFuture<'static, Result<TaskResponse<U>, TaskError>>,
+        metrics: Option<LockTaskMetrics>,
     }
 }
 
@@ -29,17 +31,31 @@ impl<U> TaskFuture<U> {
     #[inline]
     pub fn new<F>(fut: F) -> Self
     where
-        F: Future<Output = Result<TaskResponse<U>, TaskError>>,
-        F: Sized + Send + 'static,
+        F: Future<Output = Result<TaskResponse<U>, TaskError>> + Sized + Send + 'static,
     {
-        Self { fut: fut.boxed() }
+        Self {
+            fut: fut.boxed(),
+            metrics: None,
+        }
+    }
+
+    /// Returns a new [`TaskFuture`].
+    #[inline]
+    pub fn with_metrics<F>(fut: F, metrics: LockTaskMetrics) -> Self
+    where
+        F: Future<Output = Result<TaskResponse<U>, TaskError>> + Sized + Send + 'static,
+    {
+        Self {
+            fut: fut.boxed(),
+            metrics: Some(metrics),
+        }
     }
 }
 
 impl<U> From<BoxFuture<'static, Result<TaskResponse<U>, TaskError>>> for TaskFuture<U> {
     #[inline]
     fn from(fut: BoxFuture<'static, Result<TaskResponse<U>, TaskError>>) -> Self {
-        Self { fut }
+        Self { fut, metrics: None }
     }
 }
 
@@ -60,7 +76,7 @@ mod test {
     use crate::Result;
 
     #[test]
-    fn future_from_block() -> Result<()> {
+    fn from_async_block() -> Result<()> {
         let fut = async move { Ok(TaskResponse::new(5)) };
         let _fut = TaskFuture::new(fut);
 

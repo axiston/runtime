@@ -7,7 +7,7 @@ use serde_json::Value;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[must_use = "manifests do nothing unless you serialize them"]
 pub struct ServiceManifest {
-    pub(crate) service_id: String,
+    pub service_id: String,
 }
 
 impl ServiceManifest {
@@ -21,11 +21,12 @@ impl ServiceManifest {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[must_use = "manifests do nothing unless you serialize them"]
 pub struct RouteManifest {
-    pub(crate) route_id: String,
-    pub(crate) service_id: String,
-    pub(crate) inputs_schema: Value,
-    pub(crate) outputs_schema: Value,
-    pub(crate) errors_schema: Value,
+    pub route_id: String,
+    // version, deprecation notice
+    pub service_id: String,
+    pub inputs_schema: Value,
+    pub outputs_schema: Value,
+    pub errors_schema: Value,
 }
 
 impl RouteManifest {

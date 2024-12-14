@@ -6,6 +6,7 @@ pub mod builders {
     //! [`TaskRequest`]: crate::context::TaskRequest
     //! [`TaskResponse`]: crate::context::TaskResponse
 
+    pub use super::failure::TaskErrorBuilder;
     pub use super::request::TaskRequestBuilder;
     pub use super::response::TaskResponseBuilder;
 }

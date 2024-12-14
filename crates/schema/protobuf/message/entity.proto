@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "internal/json.proto";
+
+package rt.entity;
+
+// Describes service details.
+message Service {
+  // Unique identifier for the service.
+  string service_id = 1;
+  // Name of the service (e.g., Google Email).
+  string name = 21;
+  // Unique identifier for the service's icon.
+  string icon = 22;
+  // Brief description of the service.
+  string description = 4;
+
+  string version = 5;
+}
+
+// Describes action or trigger details.
+message Entity {
+  // Unique identifier for the entity.
+  string entity_id = 1;
+  // Unique identifier for the service.
+  string service_id = 2;
+
+  // Name of the entity (e.g., Send via Google Email).
+  string name = 21;
+  // Unique identifier for the entity's icon.
+  string icon = 22;
+
+  // Input `JSON` Schema for this entity.
+  repeated rt.internal.json.JsonData inputs = 7;
+  // Output `JSON` Schema for this entity.
+  repeated rt.internal.json.JsonData outputs = 8;
+  // Error `JSON` Schema for this entity.
+  repeated rt.internal.json.JsonData errors = 9;
+}
+
+// Describes secrets required by a entity.
+message Secret {
+  // Unique identifier for the secret.
+  string secret_id = 1;
+  // Name of the secret (e.g., "API Key").
+  string name = 2;
+  // Description of the secret.
+  string description = 3;
+}

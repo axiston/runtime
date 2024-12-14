@@ -14,7 +14,7 @@ members = [
 version = "0.1.0"
 edition = "2021"
 license = "Axiston License 1.0"
-publish = false
+publish = true
 
 authors = ["Axiston <contact@axiston.com>"]
 repository = "https://github.com/axiston/runtime"
@@ -34,10 +34,15 @@ futures = { version = "0.3", features = [] }
 thiserror = { version = "2.0", features = [] }
 anyhow = { version = "1.0", features = ["backtrace"] }
 
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0", features = [] }
+jsonschema = { version = "0.26", features = [] }
+
 tracing = { version = "0.1", features = [] }
 derive_more = { version = "1.0", features = ["full"] }
-serde = { version = "1.0", features = ["derive"] }
 ecow = { version = "0.2", features = ["serde"] }
+time = { version = "0.3", features = ["serde"] }
+uuid = { version = "1.11", features = ["serde", "v4", "v7"] }
 
 tonic = { version = "0.12", features = [] }
 prost = { version = "0.13", features = [] }

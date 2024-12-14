@@ -23,13 +23,21 @@ path = "lib.rs"
 [dependencies]
 # axiston-rt-jsvm = { workspace = true }
 axiston-rt-schema = { workspace = true }
-# axiston-rt-task = { workspace = true }
+axiston-rt-task = { workspace = true }
 
 tokio = { workspace = true }
 tokio-stream = { workspace = true }
 futures = { workspace = true }
 anyhow = { workspace = true }
 tracing = { workspace = true }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+jsonschema = { workspace = true }
+
+derive_more = { workspace = true }
+time = { workspace = true }
+uuid = { workspace = true }
 
 tonic = { workspace = true }
 prost = { workspace = true }

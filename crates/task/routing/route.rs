@@ -17,7 +17,7 @@ pub struct Route<T, U> {
     pub(crate) route_handler: Arc<RouteHandler<T, U>>,
 }
 
-struct RouteHandler<T, U> {
+pub(crate) struct RouteHandler<T, U> {
     pub(crate) route_task_handler: TaskHandler<T, U>,
     pub(crate) route_manifest: RouteManifest,
     pub(crate) inputs_schema_validator: Validator,
@@ -29,7 +29,6 @@ impl<T, U> Route<T, U> {
     /// Returns a new [`Route`].
     pub fn new(
         route_task_handler: TaskHandler<T, U>,
-        layer_compose: Option<LayerCompose>,
         route_manifest: RouteManifest,
     ) -> Result<Self> {
         let route_handler = RouteHandler {
@@ -58,25 +57,45 @@ impl<T, U> Route<T, U> {
     }
 
     /// Processes the request and returns the response asynchronously.
-    pub async fn execute(&self, task_request: TaskRequest<T>) -> Result<TaskResponse<U>> {
+    pub async fn route(
+        &self,
+        task_request: TaskRequest<T>,
+        layer_compose: Option<&LayerCompose>,
+    ) -> Result<TaskResponse<U>>
+    where
+        T: 'static,
+        U: 'static,
+    {
         // TODO: Apply layers.
         // let _ = &task_request.layers;
 
         self.route_handler
             .inputs_schema_validator
             .validate(&task_request.inputs)?;
+
         let mut task_handler = self.route_handler.route_task_handler.clone();
-        let task_response = task_handler.call(task_request).await?;
-        self.route_handler
-            .outputs_schema_validator
-            .validate(&task_response.outputs)?;
-        Ok(task_response)
+        match task_handler.call(task_request).await {
+            Ok(task_response) => {
+                self.route_handler
+                    .outputs_schema_validator
+                    .validate(&task_response.outputs)?;
+                Ok(task_response)
+            }
+            Err(task_error) => {
+                self.route_handler
+                    .errors_schema_validator
+                    .validate(&task_error.values)?;
+                Err(task_error.into())
+            }
+        }
     }
 }
 
 impl<T, U> Clone for Route<T, U> {
     fn clone(&self) -> Self {
-        todo!()
+        Self {
+            route_handler: self.route_handler.clone(),
+        }
     }
 }
 

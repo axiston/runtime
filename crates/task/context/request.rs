@@ -1,18 +1,10 @@
 use std::fmt;
 
-use derive_more::{Deref, DerefMut, From};
+use derive_more::{Deref, DerefMut};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::routing::layers::Layers;
-
-/// TODO.
-#[derive(Debug, Clone, Serialize, Deserialize, Deref, From)]
-pub struct Inputs(pub Value);
-
-/// TODO.
-#[derive(Debug, Clone, Serialize, Deserialize, Deref, From)]
-pub struct Secrets(pub Value);
 
 /// Serializable [`TaskHandler`] service request.
 ///
@@ -24,8 +16,8 @@ pub struct TaskRequest<T = ()> {
     #[deref_mut]
     inner: T,
 
-    pub(crate) inputs: Inputs,
-    pub(crate) secrets: Secrets,
+    pub(crate) inputs: Value,
+    pub(crate) secrets: Value,
     pub(crate) layers: Layers,
 }
 
@@ -35,8 +27,8 @@ impl<T> TaskRequest<T> {
     pub fn new(inner: T) -> Self {
         Self {
             inner,
-            inputs: Inputs(Value::default()),
-            secrets: Secrets(Value::default()),
+            inputs: Value::default(),
+            secrets: Value::default(),
             layers: Layers::new(),
         }
     }
@@ -112,8 +104,8 @@ impl<T> TaskRequestBuilder<T> {
     pub fn build(self) -> TaskRequest<T> {
         TaskRequest {
             inner: self.inner,
-            inputs: Inputs(self.inputs.unwrap_or_default()),
-            secrets: Secrets(self.secrets.unwrap_or_default()),
+            inputs: self.inputs.unwrap_or_default(),
+            secrets: self.secrets.unwrap_or_default(),
             layers: self.layers.unwrap_or_default(),
         }
     }
@@ -124,7 +116,7 @@ mod test {
     use serde_json::Value;
 
     use crate::context::TaskRequest;
-    use crate::routing::Layers;
+    use crate::routing::layers::Layers;
     use crate::Result;
 
     #[test]

@@ -7,8 +7,6 @@ package rt.response;
 
 // Start execution response message.
 message OpenResponse {
-  google.protobuf.Timestamp started = 1;
-  optional google.protobuf.Duration estimate = 2;
 }
 
 // Response message containing the result of task execution.

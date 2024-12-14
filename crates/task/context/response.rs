@@ -1,16 +1,8 @@
 use std::fmt;
 
-use derive_more::{Deref, DerefMut, From};
+use derive_more::{Deref, DerefMut};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-
-/// TODO.
-#[derive(Debug, Clone, Serialize, Deserialize, Deref, From)]
-pub struct Outputs(pub Value);
-
-/// TODO.
-#[derive(Debug, Clone, Serialize, Deserialize, Deref, From)]
-pub struct Metrics(pub Value);
 
 /// Deserializable [`TaskHandler`] service response.
 ///
@@ -22,8 +14,8 @@ pub struct TaskResponse<T> {
     #[deref_mut]
     inner: T,
 
-    pub(crate) outputs: Outputs,
-    pub(crate) metrics: Metrics,
+    pub(crate) outputs: Value,
+    pub(crate) metrics: Value,
 }
 
 impl<T> TaskResponse<T> {
@@ -32,8 +24,8 @@ impl<T> TaskResponse<T> {
     pub fn new(inner: T) -> Self {
         Self {
             inner,
-            outputs: Outputs(Value::default()),
-            metrics: Metrics(Value::default()),
+            outputs: Value::default(),
+            metrics: Value::default(),
         }
     }
 
@@ -83,15 +75,15 @@ impl<T> TaskResponseBuilder<T> {
 
     /// Overrides the default value of [`TaskResponse`]`::outputs`.
     #[inline]
-    pub fn with_outputs(mut self, json: Value) -> Self {
-        self.outputs = Some(json);
+    pub fn with_outputs(mut self, values: Value) -> Self {
+        self.outputs = Some(values);
         self
     }
 
     /// Overrides the default value of [`TaskResponse`]`::metrics`.
     #[inline]
-    pub fn with_metrics(mut self, json: Value) -> Self {
-        self.metrics = Some(json);
+    pub fn with_metrics(mut self, values: Value) -> Self {
+        self.metrics = Some(values);
         self
     }
 
@@ -99,8 +91,8 @@ impl<T> TaskResponseBuilder<T> {
     pub fn build(self) -> TaskResponse<T> {
         TaskResponse {
             inner: self.inner,
-            outputs: Outputs(self.outputs.unwrap_or_default()),
-            metrics: Metrics(self.metrics.unwrap_or_default()),
+            outputs: self.outputs.unwrap_or_default(),
+            metrics: self.metrics.unwrap_or_default(),
         }
     }
 }

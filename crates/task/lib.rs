@@ -13,27 +13,44 @@
 //! ```
 
 use std::borrow::Cow;
+use std::collections::HashMap;
 
+use derive_more::From;
 use jsonschema::ValidationError;
+
+use crate::routing::index::{RouteIndex, ServiceIndex};
+use crate::routing::manifest::{RouteManifest, ServiceManifest};
 
 pub mod context;
 pub mod handler;
 pub mod routing;
+
+/// TODO.
+#[derive(Debug)]
+pub struct Registry {
+    services: HashMap<ServiceIndex, ServiceManifest>,
+    routes: HashMap<RouteIndex, RouteManifest>,
+}
 
 /// Unrecoverable failure of the [`Router`].
 ///
 /// Includes all error types that may occur.
 ///
 /// [`Router`]: routing::Router
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, thiserror::Error, From)]
 #[must_use = "errors do nothing unless you use them"]
 pub enum Error {
+    /// Route with the index not found.
+    #[error("index not found")]
+    Index(RouteIndex),
     /// Task validation failure.
+    #[from(ignore)]
     #[error("task validation failure: {0}")]
-    Validate(ValidationError<'static>),
+    Validation(ValidationError<'static>),
     /// Task execution failure.
+    #[from(ignore)]
     #[error("task execution failure: {0}")]
-    Task(#[from] context::TaskError),
+    Execution(#[from] context::TaskError),
 }
 
 impl<'a> From<ValidationError<'a>> for Error {
@@ -45,7 +62,7 @@ impl<'a> From<ValidationError<'a>> for Error {
             schema_path: validation_error.schema_path,
         };
 
-        Self::Validate(validation_error)
+        Self::Validation(validation_error)
     }
 }
 
@@ -53,8 +70,3 @@ impl<'a> From<ValidationError<'a>> for Error {
 ///
 /// [`Result`]: std::result::Result
 pub type Result<T, E = Error> = std::result::Result<T, E>;
-
-// TODO: Is there any real reason to make a different between action and trigger?
-// Make trigger dynamically determined if the action returns a single boolean.
-
-// TODO: Manifests are defined in proto files with serde derive.

@@ -2,8 +2,8 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/duration.proto";
-import "event/request.proto";
-import "event/response.proto";
+import "message/request.proto";
+import "message/response.proto";
 
 package rt.instance;
 
@@ -23,10 +23,12 @@ message EventRequest {
   oneof payload {
     // Step 1.1: Gateway requests to open a connection.
     rt.request.OpenRequest open_request = 11;
+    // Step 1.3: Gateway request to update policy.
+    rt.request.PolicyRequest policy_request = 12;
     // Step 2.1: Gateway submits a task for the execution.
-    rt.request.ExecuteRequest execute_request = 12;
+    rt.request.ExecuteRequest execute_request = 13;
     // Step 3.1: Gateway requests to close the connection.
-    rt.request.CloseRequest close_request = 13;
+    rt.request.CloseRequest close_request = 14;
   }
 }
 
@@ -58,52 +60,42 @@ message EventResponse {
 }
 
 // Requests service status and metrics.
-message StatusRequest {
-  // Forces retrieval of the latest metrics.
-  optional bool current = 11;
+message GetStatusRequest {
   // Includes detailed metrics in the response.
-  optional bool verbose = 12;
-
+  optional bool verbose_metrics = 1;
+  // Forces retrieval of the latest metrics.
+  optional bool force_latest = 2;
   // Sliding window length (used by metrics).
-  optional int32 window = 21;
+  optional uint32 sliding_window = 3;
 }
 
-// Details service status and performance metrics.
-message StatusResponse {
+// Contains service status and performance metrics.
+message GetStatusResponse {
   // Task-related metrics:
 
   // Number of tasks waiting in the queue to be processed.
-  int64 tasks_waiting = 11;
+  uint64 tasks_waiting = 11;
   // Number of tasks currently being processed.
-  int64 tasks_running = 12;
-  // Total number of tasks that have been completed successfully.
-  int64 tasks_done = 13;
+  uint64 tasks_running = 12;
 
   // Time-related metrics:
 
-  // Total time the service has been running since startup (human-readable format).
-  google.protobuf.Duration total_uptime = 21;
-  // Cumulative time the service has spent idle (not processing any tasks).
-  google.protobuf.Duration total_idle_time = 22;
-  // Cumulative time the service has been overwhelmed and tasks have been queued due to load.
-  google.protobuf.Duration total_wait_time = 23;
-
-  // Average processing time for tasks in the most recent window.
-  google.protobuf.Duration avg_recent_time = 31;
-  // Overall average processing time since the service started.
-  google.protobuf.Duration avg_total_time = 32;
-  // Average processing time for tasks that failed.
-  google.protobuf.Duration avg_failure_time = 33;
-  // Average processing time for tasks that succeeded.
-  google.protobuf.Duration avg_success_time = 34;
+  // Average waiting time for tasks in the most recent window.
+  google.protobuf.Duration recent_waiting_time = 21;
+  // Average running time for tasks in the most recent window.
+  google.protobuf.Duration recent_running_time = 22;
+  // Overall average waiting time since the service started.
+  google.protobuf.Duration average_waiting_time = 23;
+  // Overall average running time since the service started.
+  google.protobuf.Duration average_running_time = 24;
 }
 
 // Provides runtime instance management.
 service Instance {
   // Retrieves detailed service health and performance metrics.
-  rpc Status(StatusRequest) returns (StatusResponse);
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
 
   // Provides a bidirectional event streaming RPC for continuous communication
   // between the gateway (as a client) and the runtime (as a server).
-  rpc Bus(stream EventRequest) returns (stream EventResponse);
+  rpc ConnectWorker(stream EventRequest) returns (stream EventResponse);
 }

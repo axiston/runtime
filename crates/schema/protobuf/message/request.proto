@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "policy/retry.proto";
+import "policy/timeout.proto";
+
+package rt.request;
+
+// Indicates the gateway is ready accept events.
+message OpenRequest {
+  // Token for authenticating the gateway.
+  string authentication_token = 3;
+  // Required runtime capabilities.
+  repeated string runtime_capabilities = 4;
+  // Preferred communication protocols.
+  repeated string preferred_protocols = 5;
+
+  // Constraints on resources for the task.
+  optional ResourceLimits resource_limits = 26;
+}
+
+// Request to update the middleware policy by the Runtime.
+message PolicyRequest {
+  // Policy for retrying failed tasks.
+  optional rt.policy.retry.RetryPolicy retry_policy = 31;
+  // Policy for handling task timeouts.
+  optional rt.policy.timeout.TimeoutPolicy timeout_policy = 32;
+}
+
+// Request to submit a task for execution by the Runtime.
+message ExecuteRequest {
+  // Unique identifier for the task.
+  string task_id = 1;
+  // Custom task parameters as key-value pairs.
+  map<string, string> task_fields = 2;
+  // Sensitive task-specific data (e.g., API keys).
+  map<string, string> task_secrets = 3;
+
+  // Priority level of the task (higher is more important).
+  optional int32 priority = 23;
+  // Deadline for the task completion.
+  optional google.protobuf.Timestamp deadline = 24;
+  // Whether task dependencies are cached.
+  optional bool cache_deps = 25;
+}
+
+// Request to close the connection, blocking the Runtime queue.
+message CloseRequest {
+  // Forces immediate closure without waiting.
+  optional bool force_close = 2;
+  // Reason for closing the connection.
+  optional string reason = 3;
+  // Require acknowledgment before closing.
+  optional bool ack_required = 4;
+}
+
+// Limits runtime resources.
+message ResourceLimits {
+  // Maximum used CPU percentage.
+  uint32 max_cpu_percent = 1;
+  // Maximum used RAM in MB.
+  uint32 max_ram_mb = 2;
+  // Maximum used disk in MB.
+  uint64 max_disk_mb = 3;
+}
