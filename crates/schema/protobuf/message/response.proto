@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+package rt.response;
+
+// Start execution response message.
+message OpenResponse {
+}
+
+// Response message containing the result of task execution.
+message ExecuteResponse {
+  // Unique identifier for the task.
+  string task_id = 1;
+  // Task's return code indicating success or failure.
+  uint32 return_code = 2;
+
+  // When the task started.
+  google.protobuf.Timestamp start_time = 4;
+  // When the task completed.
+  google.protobuf.Timestamp end_time = 5;
+  // Total time taken for execution.
+  google.protobuf.Duration execution_time = 6;
+}
+
+// Response to acknowledge that no new tasks will be accepted.
+message CloseResponse {
+  // Indicates if it's safe to terminate the connection.
+  bool is_safe_to_close = 1;
+  // Number of tasks still in the queue or running.
+  int32 remaining_tasks = 3;
+}
+
+// Intermediate task status notification sent by the runtime.
+message NotifyResponse {
+  oneof status_info {
+    // Details for the "waiting" status.
+    WaitingStatus waiting = 21;
+    // Details for the "pre-running" status.
+    PreRunningStatus pre_running = 22;
+    // Details for the "running" status.
+    RunningStatus running = 23;
+    // Details for the "post-running" status.
+    PostRunningStatus post_running = 24;
+  }
+}
+
+// Waiting status information.
+message WaitingStatus {
+  // Number of tasks ahead in the queue.
+  uint32 tasks_before = 1;
+  // Total number of tasks in the queue.
+  uint32 queue_size = 2;
+  // Maximum capacity of the queue.
+  uint32 queue_capacity = 3;
+  // Estimated wait time before task starts.
+  google.protobuf.Duration wait_time = 4;
+}
+
+// Pre-running status information.
+message PreRunningStatus {
+  // Size (in bytes) of data to serialize.
+  uint64 input_bytes = 1;
+  // Version of the Runtime.
+  uint64 runtime_version = 2;
+  // File system type used ("virtual" or "physical").
+  FileSystemType fs_type = 3;
+  // Whether task dependencies are cached.
+  bool cache_deps = 4;
+  // Allocated runtime resources.
+  ResourceAllocated resource = 5;
+}
+
+// Running status information.
+message RunningStatus {
+  // Identifier of the thread running this task.
+  int32 thread_id = 8;
+  // Estimated remaining run time.
+  google.protobuf.Duration run_time = 1;
+  // Current progress checkpoint.
+  int32 checkpoint = 6;
+}
+
+// Post-running status information.
+message PostRunningStatus {
+  // Task's return code indicating success or failure.
+  uint32 return_code = 1;
+  // Total bytes read during task execution.
+  uint64 read_bytes = 2;
+  // Total bytes written during task execution.
+  uint64 written_bytes = 3;
+  // Size (in bytes) of data to deserialize.
+  uint64 output_bytes = 4;
+  // Peak or maximum recorded resource usage.
+  ResourceUsage resource_usage = 5;
+}
+
+// Represents the type of filesystem used.
+enum FileSystemType {
+  // Default value, should not be used.
+  FILESYSTEM_UNSPECIFIED = 0;
+  // Virtual filesystem (e.g., in-memory, network-based).
+  FILESYSTEM_VIRTUAL = 1;
+  // Physical filesystem (e.g., SSD, HDD).
+  FILESYSTEM_PHYSICAL = 2;
+}
+
+// Allocated runtime resources.
+message ResourceAllocated {
+  // Allocated CPU cores.
+  uint32 allocated_cpu_cores = 21;
+  // Allocated RAM in megabytes.
+  uint32 allocated_ram_mb = 22;
+  // Allocated HDD in megabytes.
+  uint32 allocated_disk_mb = 23;
+}
+
+// Peak or maximum recorded resource usage.
+message ResourceUsage {
+  // Peak CPU usage as a percentage.
+  uint32 peak_cpu_percent = 21;
+  // Peak RAM usage in megabytes.
+  uint32 peak_ram_mb = 22;
+  // Peak disk usage in megabytes.
+  uint32 peak_disk_mb = 23;
+  // Peak GPU usage as a percentage.
+  uint32 peak_gpu_percent = 24;
+}

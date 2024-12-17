@@ -1,0 +1,55 @@
+# https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[workspace]
+resolver = "2"
+members = [
+    "./crates/cli",
+    "./crates/jsvm",
+    "./crates/schema",
+    "./crates/server",
+    "./crates/task",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "Axiston License 1.0"
+publish = true
+
+authors = ["Axiston <contact@axiston.com>"]
+repository = "https://github.com/axiston/runtime"
+homepage = "https://github.com/axiston/runtime"
+documentation = "https://docs.rs/axiston"
+
+[workspace.dependencies]
+axiston-rt-jsvm = { path = "./crates/jsvm", version = "0.1.0" }
+axiston-rt-schema = { path = "./crates/schema", version = "0.1.0" }
+axiston-rt-server = { path = "./crates/server", version = "0.1.0" }
+axiston-rt-task = { path = "./crates/task", version = "0.1.0" }
+
+tokio = { version = "1.36", features = ["macros", "rt-multi-thread"] }
+tokio-stream = { version = "0.1", features = [] }
+pin-project-lite = { version = "0.2", features = [] }
+futures = { version = "0.3", features = [] }
+thiserror = { version = "2.0", features = [] }
+anyhow = { version = "1.0", features = ["backtrace"] }
+
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0", features = [] }
+jsonschema = { version = "0.26", features = [] }
+
+tracing = { version = "0.1", features = [] }
+derive_more = { version = "1.0", features = ["full"] }
+ecow = { version = "0.2", features = ["serde"] }
+time = { version = "0.3", features = ["serde"] }
+uuid = { version = "1.11", features = ["serde", "v4", "v7"] }
+
+tonic = { version = "0.12", features = [] }
+prost = { version = "0.13", features = [] }
+tonic-types = { version = "0.12", features = [] }
+prost-types = { version = "0.13", features = [] }
+tonic-build = { version = "0.12", features = [] }
+prost-build = { version = "0.13", features = [] }
+
+tower = { version = "0.5", features = ["full"] }
+tower-http = { version = "0.6", features = ["full"] }

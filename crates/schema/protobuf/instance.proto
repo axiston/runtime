@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "message/request.proto";
+import "message/response.proto";
+
+package rt.instance;
+
+// Describes the message format for sending events.
+message EventRequest {
+  // The unique ID of the request message.
+  uint32 request_id = 1;
+  // The unique ID of the message group.
+  uint32 group_id = 2;
+
+  // When the event was recv by the gateway.
+  google.protobuf.Timestamp recv = 3;
+  // When the event was sent to the runtime.
+  google.protobuf.Timestamp send = 4;
+
+  // The content of the message.
+  oneof payload {
+    // Step 1.1: Gateway requests to open a connection.
+    rt.request.OpenRequest open_request = 11;
+    // Step 1.3: Gateway request to update policy.
+    rt.request.PolicyRequest policy_request = 12;
+    // Step 2.1: Gateway submits a task for the execution.
+    rt.request.ExecuteRequest execute_request = 13;
+    // Step 3.1: Gateway requests to close the connection.
+    rt.request.CloseRequest close_request = 14;
+  }
+}
+
+// Describes the message format for receiving events.
+message EventResponse {
+  // The unique ID of the request message.
+  uint32 request_id = 1;
+  // The unique ID of the response message.
+  uint32 response_id = 2;
+  // The unique ID of the message group.
+  uint32 group_id = 3;
+
+  // When the event was recv by the runtime.
+  google.protobuf.Timestamp recv = 4;
+  // When the event was sent to the gateway.
+  google.protobuf.Timestamp send = 5;
+
+  // The content of the message.
+  oneof payload {
+    // Step 1.2: Runtime acknowledges that the connection is open.
+    rt.response.OpenResponse open_response = 11;
+    // Step 2.2: Runtime notifies the Gateway about the task's status change.
+    rt.response.NotifyResponse notify_response = 12;
+    // Step 2.3: Runtime responds with the result of executing the task.
+    rt.response.ExecuteResponse execute_response = 13;
+    // Step 3.2: Runtime confirms the connection is closed.
+    rt.response.CloseResponse close_response = 14;
+  }
+}
+
+// Requests service status and metrics.
+message GetStatusRequest {
+  // Includes detailed metrics in the response.
+  optional bool verbose_metrics = 1;
+  // Forces retrieval of the latest metrics.
+  optional bool force_latest = 2;
+  // Sliding window length (used by metrics).
+  optional uint32 sliding_window = 3;
+}
+
+// Contains service status and performance metrics.
+message GetStatusResponse {
+  // Task-related metrics:
+
+  // Number of tasks waiting in the queue to be processed.
+  uint64 tasks_waiting = 11;
+  // Number of tasks currently being processed.
+  uint64 tasks_running = 12;
+
+  // Time-related metrics:
+
+  // Average waiting time for tasks in the most recent window.
+  google.protobuf.Duration recent_waiting_time = 21;
+  // Average running time for tasks in the most recent window.
+  google.protobuf.Duration recent_running_time = 22;
+  // Overall average waiting time since the service started.
+  google.protobuf.Duration average_waiting_time = 23;
+  // Overall average running time since the service started.
+  google.protobuf.Duration average_running_time = 24;
+}
+
+// Provides runtime instance management.
+service Instance {
+  // Retrieves detailed service health and performance metrics.
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+
+  // Provides a bidirectional event streaming RPC for continuous communication
+  // between the gateway (as a client) and the runtime (as a server).
+  rpc ConnectWorker(stream EventRequest) returns (stream EventResponse);
+}

@@ -1,0 +1,25 @@
+{
+    // https://docs.deno.com/runtime/manual/
+    "compilerOptions": {
+        "strict": true
+    },
+    "workspace": [
+        "./modules/assert",
+        "./modules/runtime",
+        "./modules/testing"
+    ],
+    "lint": {
+        "include": ["./crates/", "./examples/", "./modules/"],
+        "exclude": ["./target/", "./debug/"],
+        "report": "compact"
+    },
+    "test": {
+        "include": ["./examples/", "./modules/"],
+        "exclude": ["./target/", "./debug/"]
+    },
+    "fmt": {
+        "include": ["./**/*.ts", "./**/*.js", "./**/*.md", "./*.json*"],
+        "exclude": ["./target/", "./debug/"],
+        "indentWidth": 4
+    }
+}

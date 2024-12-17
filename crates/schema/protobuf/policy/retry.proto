@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+package rt.policy.retry;
+
+// Policy for retrying failed tasks.
+message RetryPolicy {
+  // Maximum number of retry attempts.
+  uint32 max_retries = 1;
+  // Base delay between consecutive retries.
+  google.protobuf.Duration base_backoff = 2;
+  // Multiplier for exponential backoff.
+  optional double exponential_multiplier = 3;
+  // Maximum delay between consecutive retries.
+  google.protobuf.Duration max_backoff = 4;
+}

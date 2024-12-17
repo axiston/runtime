@@ -1,0 +1,48 @@
+# https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[package]
+name = "axiston-rt-server"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+publish = { workspace = true }
+readme = "./README.md"
+
+authors = { workspace = true }
+repository = { workspace = true }
+homepage = { workspace = true }
+documentation = { workspace = true }
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[lib]
+path = "lib.rs"
+
+[dependencies]
+# axiston-rt-jsvm = { workspace = true }
+axiston-rt-schema = { workspace = true }
+axiston-rt-task = { workspace = true }
+
+tokio = { workspace = true }
+tokio-stream = { workspace = true }
+futures = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+jsonschema = { workspace = true }
+
+derive_more = { workspace = true }
+time = { workspace = true }
+uuid = { workspace = true }
+
+tonic = { workspace = true }
+prost = { workspace = true }
+tonic-types = { workspace = true }
+prost-types = { workspace = true }
+
+tower = { workspace = true }
+tower-http = { workspace = true }
